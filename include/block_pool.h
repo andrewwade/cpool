@@ -10,21 +10,23 @@ extern "C" {
 #endif
 
 typedef struct block_pool_t {
-    void *memory;
-    void *available;
-    unsigned alignment;
-    unsigned size;
+    void *start;
+    void *search;
+    void *end;
+    size_t alignment;
+    size_t capacity;
+    size_t available;
 } block_pool_t;
 
-void block_pool_init(block_pool_t *pool, unsigned block_size, void *memory, unsigned memory_size);
+void block_pool_init(block_pool_t *pool, size_t alignment, void *start, void *end);
 
-void block_pool_destroy(block_pool_t *pool);
+int block_pool_is_valid(block_pool_t *pool);
+
+void block_pool_reset(block_pool_t *pool, size_t alignment);
 
 void *block_allocate(block_pool_t *pool);
 
-void block_free(void *block);
-
-
+void block_release(void *block);
 
 #ifdef __cplusplus
 };
