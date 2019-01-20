@@ -8,14 +8,14 @@ add_library(memorypool
         include/byte_pool.h
         source/block_pool.c
         source/byte_pool.c
-        )
+        source/memory_pool.c include/memory_pool.h)
 
 target_include_directories(memorypool PUBLIC PRIVATE include)
 
-add_executable(test_main
+add_executable(test_memorypool
         test/test_main.c
         test/test_block_pool.c
-        test/test_byte_pool.c test/test_block_pool.h test/test_byte_pool.h)
+        test/test_byte_pool.c test/test_block_pool.h test/test_byte_pool.h test/test_memory_pool.c test/test_memory_pool.h)
 
-target_include_directories(test_main PUBLIC PRIVATE source PUBLIC PRIVATE include)
-target_link_libraries(test_main PUBLIC PRIVATE memorypool)
+target_include_directories(test_memorypool PUBLIC PRIVATE source PUBLIC PRIVATE include)
+target_link_libraries(test_memorypool PUBLIC PRIVATE memorypool)
