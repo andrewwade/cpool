@@ -12,8 +12,6 @@ void memory_pool_init(memory_pool_t *pool, size_t alignment, void *start, void *
     pool->start = start;
     pool->search = start;
     pool->end = end;
-    pool->capacity = (end-start)/alignment;
-    pool->fragments = 0;
 
     memory_pool_segment(pool->start, pool->alignment, pool->end-pool->start, true);
     pool->search = pool->start;
@@ -78,7 +76,7 @@ void *memory_pool_allocate_size(memory_pool_t *pool, size_t size) {
     return return_ptr;
 }
 
-void memroy_pool_release_size(memory_pool_t *pool, void *memory, size_t size) {
+void memory_pool_release_size(memory_pool_t *pool, void *memory, size_t size) {
     memory_pool_segment(memory, pool->alignment, size - pool->alignment, true);
     *(char**)(memory+size-pool->alignment) = pool->search;
     pool->search = memory;

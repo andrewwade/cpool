@@ -12,11 +12,11 @@ void test_memory_pool_run() {
     memory_pool_t buffer_pool;
     memory_pool_t *pool = &buffer_pool;
 
-    memory_pool_init(pool, sizeof(int), buffer, buffer+512);
+    memory_pool_init(pool, sizeof(int), buffer, buffer + 512);
 
     int *v1 = memory_pool_allocate(pool);
 
-    int *v4 = memory_pool_allocate_size(pool, sizeof(int)*4);
+    int *v4 = memory_pool_allocate_size(pool, sizeof(int) * 4);
 
-    memroy_pool_release_size(pool, v4, sizeof(int)*4);
+    memory_pool_release_size(pool, v4, sizeof(int) * 4);
 }

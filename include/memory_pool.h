@@ -19,14 +19,12 @@ struct memory_pool_t {
     void *search;
     void *end;
     size_t alignment;
-    size_t capacity;
-    size_t fragments;
 };
 
 /**
  *
  * @param pool
- * @param alignment Must be >= sizeof(void*)
+ * @param alignment >= sizeof(void*)
  * @param start
  * @param end
  */
@@ -40,7 +38,7 @@ void memory_pool_ordered_release(memory_pool_t *pool, void *memory);
 
 void *memory_pool_allocate_size(memory_pool_t *pool, size_t size);
 
-void memroy_pool_release_size(memory_pool_t *pool, void *memory, size_t size);
+void memory_pool_release_size(memory_pool_t *pool, void *memory, size_t size);
 
 void memory_pool_ordered_release_size(memory_pool_t *pool, void *memory, size_t size);
 
