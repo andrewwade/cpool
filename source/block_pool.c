@@ -13,7 +13,7 @@ union block_header_t {
 };
 
 void block_pool_init(block_pool_t *pool, size_t alignment, void *start, void *end) {
-    if (pool != NULL) {
+    if (pool != NULL && alignment > 0 && start != NULL && end != NULL) {
         if ((end - start) > sizeof(block_header_t) + alignment) {
             pool->start     = start;
             pool->search    = pool->start;
@@ -30,7 +30,9 @@ void block_pool_init(block_pool_t *pool, size_t alignment, void *start, void *en
 int block_pool_is_valid(block_pool_t *pool) {
     return (pool != NULL) &&
            (pool->start < pool->end) &&
-           (pool->capacity <= (pool->end - pool->start));
+           (pool->alignment > 0) &&
+           (pool->capacity <= (pool->end - pool->start)) &&
+           (pool->available <= pool->capacity);
 }
 
 void block_pool_reset(block_pool_t *pool, size_t alignment) {
@@ -57,7 +59,7 @@ void block_pool_reset(block_pool_t *pool, size_t alignment) {
 void *block_allocate(block_pool_t *pool) {
     block_header_t *block = NULL;
     if (block_pool_is_valid(pool)) {
-        if(pool->search != NULL && pool->available > 0) {
+        if (pool->search != NULL && pool->available > 0) {
             block = pool->search;
             pool->search = block->next;
             block->owner = pool;
@@ -74,12 +76,13 @@ void block_release(void *memory) {
 
     if (memory != NULL) {
         /* get block ptr */
-        block = ((block_header_t *)memory) - 1;
+        block = ((block_header_t *) memory) - 1;
         pool  = block->owner;
 
         if (block_pool_is_valid(pool)) {
             block->next  = pool->search;
             pool->search = block;
+            pool->available++;
         }
     }
 }

@@ -9,6 +9,8 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+
 typedef struct block_pool_t {
     void *start;
     void *search;

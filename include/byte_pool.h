@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-#include "stddef.h"
+#include <stddef.h>
 
 #ifndef BYTE_BLOCK_MIN
 #define BYTE_BLOCK_MIN 16 /* set minimum byte block size to reduce fragmentation */
@@ -32,6 +32,8 @@ void byte_pool_defragment(byte_pool_t *pool);
 void *byte_allocate(byte_pool_t *pool, size_t size);
 
 void byte_release(void *memory);
+
+size_t byte_size(void *memory);
 
 #ifdef __cplusplus
 };

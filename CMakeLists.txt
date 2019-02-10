@@ -1,21 +1,24 @@
 cmake_minimum_required(VERSION 3.13)
-project(malloc_override_test C)
+project(memorypool C CXX)
 
 set(CMAKE_C_STANDARD 99)
 
 add_library(memorypool
         include/block_pool.h
         include/byte_pool.h
+        include/chunk_pool.h
         source/block_pool.c
         source/byte_pool.c
-        source/memory_pool.c include/memory_pool.h)
+        source/chunk_pool.c)
 
-target_include_directories(memorypool PUBLIC PRIVATE include)
+target_include_directories(memorypool PUBLIC include INTERFACE include)
 
-add_executable(test_memorypool
-        test/test_main.c
-        test/test_block_pool.c
-        test/test_byte_pool.c test/test_block_pool.h test/test_byte_pool.h test/test_memory_pool.c test/test_memory_pool.h)
+add_subdirectory(extern/googletest)
+include_directories(extern/googletest/googletest/include extern/googletest/googlemock/include)
 
-target_include_directories(test_memorypool PUBLIC PRIVATE source PUBLIC PRIVATE include)
-target_link_libraries(test_memorypool PUBLIC PRIVATE memorypool)
+add_executable(test_all
+        test/test_block_pool.cpp
+        test/test_byte_pool.cpp
+        test/test_memory_pool.cpp)
+
+target_link_libraries(test_all PUBLIC PRIVATE memorypool gtest gmock gtest_main)
