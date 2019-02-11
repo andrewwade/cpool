@@ -1,7 +1,7 @@
 //
 // Created by Andrew Wade on 2019-01-18.
 //
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "byte_pool.h"
 
 extern "C" {

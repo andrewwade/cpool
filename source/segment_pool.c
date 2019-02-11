@@ -2,27 +2,26 @@
 // Created by Andrew Wade on 2019-01-20.
 //
 
-#include "chunk_pool.h"
+#include "segment_pool.h"
 #include <stdbool.h>
 
-static void chunk_pool_segment(void *memory, size_t alignment, size_t size, bool null_ending);
+static void segment_pool_segment(void *memory, size_t alignment, size_t size, bool null_ending);
 
-void chunk_pool_init(chunk_pool_t *pool, size_t alignment, void *start, void *end) {
+void segment_pool_init(segment_pool_t *pool, size_t alignment, void *start, void *end) {
     pool->alignment = (alignment < sizeof(void*)) ? sizeof(void*) : alignment;
     pool->start = start;
     pool->search = start;
     pool->end = end;
 
-    chunk_pool_segment(pool->start, pool->alignment, pool->end-pool->start, true);
+    segment_pool_segment(pool->start, pool->alignment, pool->end-pool->start, true);
     pool->search = pool->start;
 }
 
-
-int chunk_pool_empty(chunk_pool_t *pool) {
+int segment_pool_empty(segment_pool_t *pool) {
     return (pool == NULL) || (pool->start == NULL) ||(pool->search == NULL);
 }
 
-void *chunk_allocate(chunk_pool_t *pool) {
+void *segment_allocate(struct segment_pool_t *pool) {
     void *return_ptr = pool->search;
     if(pool->search) {
         pool->search = *(void **)pool->search;
@@ -30,12 +29,12 @@ void *chunk_allocate(chunk_pool_t *pool) {
     return return_ptr;
 }
 
-void chunk_release(chunk_pool_t *pool, void *memory) {
+void segment_release(struct segment_pool_t *pool, void *memory) {
     *(char **)memory = pool->search;
     pool->search = memory;
 }
 
-void chunk_ordered_release(chunk_pool_t *pool, void *memory) {
+void segment_ordered_release(struct segment_pool_t *pool, void *memory) {
     void *search = pool->search;
     void *next;
 
@@ -51,7 +50,7 @@ void chunk_ordered_release(chunk_pool_t *pool, void *memory) {
     }
 }
 
-void *chunk_allocate_size(chunk_pool_t *pool, size_t size) {
+void *segment_allocate_size(struct segment_pool_t *pool, size_t size) {
     void *search = pool->search;
     void *next;
     void *return_ptr= NULL;
@@ -76,20 +75,20 @@ void *chunk_allocate_size(chunk_pool_t *pool, size_t size) {
     return return_ptr;
 }
 
-void chunk_release_size(chunk_pool_t *pool, void *memory, size_t size) {
-    chunk_pool_segment(memory, pool->alignment, size - pool->alignment, true);
+void segment_release_size(struct segment_pool_t *pool, void *memory, size_t size) {
+    segment_pool_segment(memory, pool->alignment, size - pool->alignment, true);
     *(char**)(memory+size-pool->alignment) = pool->search;
     pool->search = memory;
 }
 
-void chunk_ordered_release_size(chunk_pool_t *pool, void *memory, size_t size) {
+void segment_ordered_release_size(struct segment_pool_t *pool, void *memory, size_t size) {
     void *search = pool->search;
     void *next;
 
     while(search != NULL) {
         next = *(char**)search;
         if(search < memory && memory < next) {
-            chunk_pool_segment(memory, pool->alignment, size - pool->alignment, true);
+            segment_pool_segment(memory, pool->alignment, size - pool->alignment, true);
             *(char**)(memory+size-pool->alignment) = pool->search;
             pool->search = memory;
             search = NULL; /*done searching */
@@ -99,7 +98,7 @@ void chunk_ordered_release_size(chunk_pool_t *pool, void *memory, size_t size) {
     }
 }
 
-static void chunk_pool_segment(void *memory, size_t alignment, size_t size, bool null_ending) {
+static void segment_pool_segment(void *memory, size_t alignment, size_t size, bool null_ending) {
     for(size_t i = 0; i < size; i += alignment) {
         *(char**)memory = memory+alignment;
         memory = *(char**)memory;

@@ -6,10 +6,10 @@ set(CMAKE_C_STANDARD 99)
 add_library(memorypool
         include/block_pool.h
         include/byte_pool.h
-        include/chunk_pool.h
+        include/segment_pool.h
         source/block_pool.c
         source/byte_pool.c
-        source/chunk_pool.c)
+        source/segment_pool.c)
 
 target_include_directories(memorypool PUBLIC include INTERFACE include)
 
@@ -19,6 +19,6 @@ include_directories(extern/googletest/googletest/include extern/googletest/googl
 add_executable(test_all
         test/test_block_pool.cpp
         test/test_byte_pool.cpp
-        test/test_memory_pool.cpp)
+        test/test_segment_pool.cpp)
 
 target_link_libraries(test_all PUBLIC PRIVATE memorypool gtest gmock gtest_main)
