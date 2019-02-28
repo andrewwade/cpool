@@ -1,7 +1,8 @@
-language: c
-compiler:
-  - gcc
-  - clang
+language: cpp
+
+os: linux
+
+compiler: clang
 
 before_script:
   - mkdir build

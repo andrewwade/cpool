@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.0)
+
 project(cpool C CXX)
 
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 11)
 
 add_library(cpool
         include/block_pool.h
@@ -21,4 +23,7 @@ add_executable(test_all
         test/test_byte_pool.cpp
         test/test_segment_pool.cpp)
 
+enable_testing()
+
 target_link_libraries(test_all PUBLIC PRIVATE cpool gtest gmock gtest_main)
+add_test(NAME test_all COMMAND test_all)
