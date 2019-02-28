@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.0)
 project(cpool C CXX)
 
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 11)
 
 add_library(cpool
         include/block_pool.h
